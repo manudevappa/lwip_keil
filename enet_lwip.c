@@ -38,6 +38,7 @@
 #include "utils/uartstdio.h"
 #include "httpserver_raw/httpd.h"
 #include "drivers/pinout.h"
+#include "ethernetip/ei_app_minimal.h"
 
 //*****************************************************************************
 //
@@ -344,6 +345,11 @@ main(void)
     MAP_IntPrioritySet(INT_EMAC0, ETHERNET_INT_PRIORITY);
     MAP_IntPrioritySet(FAULT_SYSTICK, SYSTICK_INT_PRIORITY);
 
+    if (EI_APP_Init(NULL) != EI_APP_STATUS_OK) {
+        UARTprintf("EtherNet/IP initialization failed\n");
+        while(1);
+    }
+
     //
     // Loop forever, processing the LED blinking.  All the work is done in
     // interrupt handlers.
@@ -358,6 +364,8 @@ main(void)
         {
         }
 
+        EI_APP_Process();
+        
         //
         // Clear the flag.
         //
